@@ -1,0 +1,341 @@
+/*
+ * Modal de qualificação da landing /clinica.
+ *
+ * Usa os mesmos tokens da página (--blue, --ink, --muted, --blue-line...) para
+ * parecer parte da landing, não um formulário genérico colado por cima.
+ */
+
+.tork-lead-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(3, 19, 51, 0.62);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.18s ease, visibility 0.18s ease;
+}
+
+.tork-lead-overlay[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tork-lead-modal {
+  position: relative;
+  width: 100%;
+  max-width: 470px;
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  background: var(--white, #fff);
+  border-radius: 20px;
+  box-shadow: 0 24px 70px rgba(6, 28, 69, 0.28);
+  padding: 30px 28px 26px;
+  transform: translateY(14px) scale(0.985);
+  transition: transform 0.2s ease;
+  font-family: "Segoe UI Variable Display", "Segoe UI", Arial, sans-serif;
+  color: var(--ink, #071b3d);
+  -webkit-overflow-scrolling: touch;
+}
+
+.tork-lead-overlay[data-open="true"] .tork-lead-modal {
+  transform: translateY(0) scale(1);
+}
+
+.tork-lead-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--blue-pale, #f5f8ff);
+  color: var(--muted, #536988);
+  font-size: 21px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tork-lead-close:hover {
+  background: var(--blue-soft, #e9f1ff);
+  color: var(--ink, #071b3d);
+}
+
+.tork-lead-progress {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--blue, #075cff);
+  margin-bottom: 10px;
+}
+
+.tork-lead-bar {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--blue-line, #cfe0ff);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.tork-lead-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--blue, #075cff);
+  transition: width 0.25s ease;
+}
+
+.tork-lead-title {
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 8px;
+  padding-right: 34px;
+}
+
+.tork-lead-subtitle {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted, #536988);
+  margin: 0 0 22px;
+}
+
+.tork-lead-question {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0 0 14px;
+}
+
+.tork-lead-options {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.tork-lead-option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 52px;
+  padding: 13px 16px;
+  text-align: left;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink, #071b3d);
+  background: var(--white, #fff);
+  border: 1.5px solid var(--blue-line, #cfe0ff);
+  border-radius: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+
+.tork-lead-option:hover {
+  border-color: var(--blue-mid, #2f78ff);
+  background: var(--blue-pale, #f5f8ff);
+}
+
+.tork-lead-option[aria-pressed="true"] {
+  border-color: var(--blue, #075cff);
+  background: var(--blue-soft, #e9f1ff);
+  font-weight: 600;
+}
+
+.tork-lead-option:active {
+  transform: scale(0.99);
+}
+
+.tork-lead-field {
+  margin-bottom: 15px;
+}
+
+.tork-lead-field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+
+.tork-lead-field input {
+  width: 100%;
+  min-height: 52px;
+  padding: 13px 15px;
+  font: inherit;
+  /* 16px evita o zoom automático do iOS ao focar o campo. */
+  font-size: 16px;
+  color: var(--ink, #071b3d);
+  background: var(--white, #fff);
+  border: 1.5px solid var(--blue-line, #cfe0ff);
+  border-radius: 13px;
+  transition: border-color 0.15s ease;
+}
+
+.tork-lead-field input:focus {
+  outline: none;
+  border-color: var(--blue, #075cff);
+}
+
+.tork-lead-field input[aria-invalid="true"] {
+  border-color: #d33a4b;
+}
+
+.tork-lead-error {
+  display: block;
+  min-height: 17px;
+  font-size: 13px;
+  color: #d33a4b;
+  margin-top: 5px;
+}
+
+.tork-lead-submit {
+  width: 100%;
+  min-height: 54px;
+  margin-top: 6px;
+  padding: 15px 20px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--white, #fff);
+  background: var(--blue, #075cff);
+  border: 0;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.tork-lead-submit:hover:not(:disabled) {
+  background: var(--blue-strong, #0047d7);
+}
+
+.tork-lead-submit:disabled {
+  opacity: 0.68;
+  cursor: not-allowed;
+}
+
+.tork-lead-legal {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted, #536988);
+  text-align: center;
+  margin: 11px 0 0;
+}
+
+.tork-lead-back {
+  margin-top: 16px;
+  padding: 0;
+  font: inherit;
+  font-size: 14px;
+  color: var(--muted, #536988);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.tork-lead-back:hover {
+  color: var(--blue, #075cff);
+}
+
+/* Sucesso */
+
+.tork-lead-success {
+  text-align: center;
+  padding: 6px 0 2px;
+}
+
+.tork-lead-check {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 29px;
+  color: var(--white, #fff);
+  background: var(--blue, #075cff);
+  border-radius: 50%;
+}
+
+.tork-lead-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.tork-lead-action-primary,
+.tork-lead-action-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 15px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.tork-lead-action-primary {
+  color: var(--white, #fff);
+  background: var(--blue, #075cff);
+  border: 1.5px solid var(--blue, #075cff);
+}
+
+.tork-lead-action-primary:hover {
+  background: var(--blue-strong, #0047d7);
+}
+
+.tork-lead-action-secondary {
+  color: var(--blue, #075cff);
+  background: var(--white, #fff);
+  border: 1.5px solid var(--blue-line, #cfe0ff);
+}
+
+.tork-lead-action-secondary:hover {
+  border-color: var(--blue, #075cff);
+  background: var(--blue-pale, #f5f8ff);
+}
+
+.tork-lead-step[hidden],
+.tork-lead-success[hidden] {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  .tork-lead-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .tork-lead-modal {
+    max-width: 100%;
+    max-height: 100dvh;
+    height: 100dvh;
+    border-radius: 0;
+    padding: 26px 20px calc(24px + env(safe-area-inset-bottom));
+    transform: translateY(24px);
+  }
+
+  .tork-lead-title {
+    font-size: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tork-lead-overlay,
+  .tork-lead-modal,
+  .tork-lead-bar span {
+    transition: none;
+  }
+}

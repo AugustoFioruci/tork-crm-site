@@ -1,7 +1,7 @@
 (() => {
-  const PIXEL_ID = "1414293990547721";
+  const PIXEL_ID = "1067818909038288";
   const CONSENT_KEY = "tork_marketing_consent_v1";
-  let marketingAllowed = false;
+  let marketingAllowed = true;
 
   function readConsent() {
     try {
@@ -24,9 +24,30 @@
     window.fbq("consent", "grant");
     if (!window.__torkMetaPageViewTracked) {
       window.fbq("track", "PageView");
+      // Marca a visita à landing como conteúdo visto. O funil real de anúncio
+      // é ViewContent -> CTA_Click -> FormStart -> Lead; o clique sozinho
+      // deixou de ser tratado como conversão.
+      window.fbq("track", "ViewContent", {
+        content_name: "Landing Clinicas",
+        content_category: "Landing",
+      });
       window.__torkMetaPageViewTracked = true;
     }
   }
+
+  /**
+   * Canal único de eventos para o resto da página (modal de lead, por exemplo).
+   *
+   * Existe para que nenhum outro script precise falar com `fbq` direto e acabe
+   * disparando evento de quem recusou cookies — a checagem de consentimento
+   * fica em um lugar só.
+   */
+  window.torkPixel = {
+    track(eventName, params, isCustom) {
+      if (!marketingAllowed || typeof window.fbq !== "function") return;
+      window.fbq(isCustom ? "trackCustom" : "track", eventName, params || {});
+    },
+  };
 
   function setConsent(value) {
     marketingAllowed = value === "granted";
@@ -89,7 +110,11 @@
       banner.hidden = true;
       preferences.hidden = false;
       marketingAllowed = savedConsent === "granted";
-      if (marketingAllowed) enableTracking();
+      if (marketingAllowed) {
+        enableTracking();
+      } else if (typeof window.fbq === "function") {
+        window.fbq("consent", "revoke");
+      }
     } else {
       preferences.hidden = true;
     }
@@ -98,6 +123,11 @@
   document.addEventListener("click", (event) => {
     const link = event.target.closest('a[href*="wa.me/"]');
     if (!link || !marketingAllowed || typeof window.fbq !== "function") return;
+    // Os CTAs principais mantêm o href do WhatsApp só como plano B caso o JS
+    // não carregue; o clique neles abre o formulário e não leva ninguém ao
+    // WhatsApp. Contar Contact aqui inflaria a métrica com contato que não
+    // aconteceu — quem realmente vai para o WhatsApp é o botão do sucesso.
+    if (link.hasAttribute("data-tork-cta")) return;
 
     window.fbq("track", "Contact", {
       content_name: "WhatsApp - Landing Clinicas",
