@@ -1,0 +1,105 @@
+.tork-cookie-banner {
+  position: fixed;
+  z-index: 2147483000;
+  right: 24px;
+  bottom: 24px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: min(760px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 18px 20px;
+  color: #f8fbff;
+  background: #071a3d;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  box-shadow: 0 18px 50px rgba(4, 18, 48, 0.28);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.tork-cookie-banner[hidden],
+.tork-cookie-preferences[hidden] {
+  display: none;
+}
+
+.tork-cookie-copy {
+  min-width: 0;
+}
+
+.tork-cookie-copy strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 15px;
+}
+
+.tork-cookie-copy p {
+  margin: 0;
+  color: #cbd7ee;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.tork-cookie-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 9px;
+}
+
+.tork-cookie-actions button,
+.tork-cookie-preferences {
+  min-height: 40px;
+  padding: 0 16px;
+  color: #f8fbff;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 10px;
+  font: 700 13px/1 Arial, Helvetica, sans-serif;
+  cursor: pointer;
+}
+
+.tork-cookie-actions .tork-cookie-accept {
+  color: #ffffff;
+  background: #075cff;
+  border-color: #075cff;
+}
+
+.tork-cookie-actions button:hover,
+.tork-cookie-actions button:focus-visible,
+.tork-cookie-preferences:hover,
+.tork-cookie-preferences:focus-visible {
+  outline: 2px solid #8db7ff;
+  outline-offset: 2px;
+}
+
+.tork-cookie-preferences {
+  position: fixed;
+  z-index: 2147482999;
+  left: 14px;
+  bottom: 14px;
+  min-height: 34px;
+  padding: 0 12px;
+  color: #24436f;
+  background: #ffffff;
+  border-color: #c8d4e8;
+  box-shadow: 0 8px 24px rgba(4, 18, 48, 0.14);
+  font-size: 12px;
+}
+
+@media (max-width: 640px) {
+  .tork-cookie-banner {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 14px;
+    width: calc(100% - 24px);
+    padding: 17px;
+  }
+
+  .tork-cookie-actions button {
+    flex: 1;
+  }
+}
