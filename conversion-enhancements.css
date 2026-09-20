@@ -1,0 +1,183 @@
+:root {
+  --tork-ease-out: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+[data-tork-cta] {
+  transition:
+    transform 180ms var(--tork-ease-out),
+    box-shadow 180ms var(--tork-ease-out),
+    background-color 180ms var(--tork-ease-out);
+}
+
+[data-tork-cta]:active {
+  transform: scale(0.98);
+}
+
+.tork-demo-note,
+.tork-final-note {
+  color: var(--muted, #5e6f8d);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.tork-demo-note {
+  margin-top: 0.85rem;
+  max-width: 38rem;
+}
+
+.tork-final-note {
+  margin-top: 0.8rem;
+  text-align: center;
+}
+
+.tork-proof {
+  background:
+    radial-gradient(circle at 80% 0%, rgba(7, 92, 255, 0.1), transparent 34rem),
+    linear-gradient(in oklch, rgba(238, 244, 255, 0.78), rgba(255, 255, 255, 0.96));
+  color: var(--ink, #06152f);
+  padding: clamp(3.25rem, 7vw, 5.75rem) 1.5rem;
+}
+
+.tork-proof__inner {
+  margin: 0 auto;
+  max-width: 72rem;
+}
+
+.tork-proof__eyebrow {
+  color: var(--blue, #075cff);
+  font-size: 0.76rem;
+  font-weight: 750;
+  letter-spacing: 0.13em;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+}
+
+.tork-proof h2 {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  letter-spacing: -0.045em;
+  line-height: 1.03;
+  margin: 0;
+  max-width: 48rem;
+  text-wrap: balance;
+}
+
+.tork-proof__description {
+  color: var(--muted, #5e6f8d);
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  line-height: 1.7;
+  margin: 1.15rem 0 0;
+  max-width: 45rem;
+}
+
+.tork-proof__grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 2rem;
+}
+
+.tork-proof__item {
+  background: rgba(255, 255, 255, 0.86);
+  border-radius: 1.1rem;
+  box-shadow:
+    0 0 0 1px rgba(7, 33, 78, 0.07),
+    0 1px 2px -1px rgba(7, 33, 78, 0.08),
+    0 12px 30px -22px rgba(7, 33, 78, 0.42);
+  min-height: 12.5rem;
+  padding: 1.5rem;
+  transition:
+    transform 200ms var(--tork-ease-out),
+    box-shadow 200ms var(--tork-ease-out);
+}
+
+.tork-proof__item:hover {
+  box-shadow:
+    0 0 0 1px rgba(7, 33, 78, 0.1),
+    0 2px 4px -2px rgba(7, 33, 78, 0.12),
+    0 18px 36px -22px rgba(7, 33, 78, 0.5);
+  transform: translateY(-2px);
+}
+
+.tork-proof__icon {
+  align-items: center;
+  background: var(--blue-pale, #edf3ff);
+  border-radius: 0.8rem;
+  color: var(--blue, #075cff);
+  display: inline-flex;
+  height: 2.65rem;
+  justify-content: center;
+  width: 2.65rem;
+}
+
+.tork-proof__icon svg {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.tork-proof__item h3 {
+  font-size: 1.03rem;
+  letter-spacing: -0.015em;
+  margin: 1rem 0 0;
+}
+
+.tork-proof__item p {
+  color: var(--muted, #5e6f8d);
+  font-size: 0.92rem;
+  line-height: 1.62;
+  margin: 0.55rem 0 0;
+}
+
+.tork-proof__note {
+  color: var(--muted, #5e6f8d);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  margin: 1rem 0 0;
+}
+
+.tork-home-link {
+  color: var(--muted, #5e6f8d);
+  font-size: 0.82rem;
+  font-weight: 650;
+  text-decoration: none;
+  transition: color 180ms var(--tork-ease-out);
+}
+
+.tork-home-link:hover {
+  color: var(--blue, #075cff);
+}
+
+html[data-tork-page="clinica"] header nav {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .tork-proof {
+    padding-inline: 1.1rem;
+  }
+
+  .tork-proof__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tork-proof__item {
+    min-height: auto;
+  }
+
+  .tork-home-link {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-tork-cta],
+  .tork-proof__item,
+  .tork-home-link {
+    transition-duration: 0.01ms !important;
+  }
+
+  [data-tork-cta]:active,
+  .tork-proof__item:hover {
+    transform: none;
+  }
+}

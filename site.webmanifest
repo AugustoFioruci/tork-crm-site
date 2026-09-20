@@ -1,0 +1,14 @@
+{
+  "name": "Tork CRM",
+  "short_name": "Tork",
+  "description": "CRM com inteligência artificial que atende no WhatsApp, qualifica leads e organiza a agenda.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#031333",
+  "theme_color": "#075cff",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

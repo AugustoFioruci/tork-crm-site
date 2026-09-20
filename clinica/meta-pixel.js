@@ -1,7 +1,35 @@
 (() => {
   const PIXEL_ID = "1067818909038288";
   const CONSENT_KEY = "tork_marketing_consent_v1";
-  let marketingAllowed = true;
+  const GOOGLE_ADS_ID = "AW-18453697785";
+  const GOOGLE_ADS_CONVERSION_ID = "AW-18453697785/dKQhCLXShvkcEPmptN9E";
+  let marketingAllowed = false;
+  let googleAdsInitialized = Boolean(window.__torkGoogleAdsInitialized);
+  let googleLeadTracked = false;
+
+  function enableGoogleAds() {
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+    window.gtag("consent", "update", {
+      ad_storage: "granted", ad_user_data: "granted", ad_personalization: "granted",
+    });
+    if (googleAdsInitialized || window.__torkGoogleAdsInitialized) return;
+    googleAdsInitialized = true;
+    window.__torkGoogleAdsInitialized = true;
+    window.gtag("js", new Date());
+    window.gtag("config", GOOGLE_ADS_ID);
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = "https://www.googletagmanager.com/gtag/js?id=" + GOOGLE_ADS_ID;
+    document.head.appendChild(script);
+  }
+
+  function disableGoogleAds() {
+    if (typeof window.gtag !== "function") return;
+    window.gtag("consent", "update", {
+      ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied",
+    });
+  }
 
   function readConsent() {
     try {
@@ -20,10 +48,14 @@
   }
 
   function enableTracking() {
+    enableGoogleAds();
     if (typeof window.fbq !== "function") return;
     window.fbq("consent", "grant");
     if (!window.__torkMetaPageViewTracked) {
       window.fbq("track", "PageView");
+      window.__torkMetaPageViewTracked = true;
+    }
+    if (!window.__torkMetaViewContentTracked) {
       // Marca a visita à landing como conteúdo visto. O funil real de anúncio
       // é ViewContent -> CTA_Click -> FormStart -> Lead; o clique sozinho
       // deixou de ser tratado como conversão.
@@ -31,7 +63,7 @@
         content_name: "Landing Clinicas",
         content_category: "Landing",
       });
-      window.__torkMetaPageViewTracked = true;
+      window.__torkMetaViewContentTracked = true;
     }
   }
 
@@ -44,8 +76,20 @@
    */
   window.torkPixel = {
     track(eventName, params, isCustom) {
-      if (!marketingAllowed || typeof window.fbq !== "function") return;
-      window.fbq(isCustom ? "trackCustom" : "track", eventName, params || {});
+      if (!marketingAllowed) return;
+      // Lead e emitido pelo formulario somente apos a resposta de sucesso da API.
+      // A tag base nao informa um conversion label: nao inventar send_to AW/label.
+      if (eventName === "Lead" && !googleLeadTracked && typeof window.gtag === "function") {
+        googleLeadTracked = true;
+        window.gtag("event", "conversion", {
+          send_to: GOOGLE_ADS_CONVERSION_ID,
+          value: 1.0,
+          currency: "BRL",
+        });
+      }
+      if (typeof window.fbq === "function") {
+        window.fbq(isCustom ? "trackCustom" : "track", eventName, params || {});
+      }
     },
   };
 
@@ -60,8 +104,9 @@
 
     if (marketingAllowed) {
       enableTracking();
-    } else if (typeof window.fbq === "function") {
-      window.fbq("consent", "revoke");
+    } else {
+      disableGoogleAds();
+      if (typeof window.fbq === "function") window.fbq("consent", "revoke");
     }
   }
 
@@ -82,7 +127,7 @@
     banner.innerHTML = `
       <div class="tork-cookie-copy">
         <strong id="tork-cookie-title">Cookies de marketing</strong>
-        <p>Usamos o Meta Pixel para medir visitas e contatos pelo WhatsApp. Você pode aceitar ou recusar.</p>
+        <p>Usamos Meta Pixel e Google Ads para medir visitas e envios do formulário. Você pode aceitar ou recusar.</p>
       </div>
       <div class="tork-cookie-actions">
         <button type="button" data-cookie-choice="denied">Recusar</button>

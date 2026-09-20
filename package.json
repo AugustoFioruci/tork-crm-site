@@ -1,0 +1,13 @@
+{
+  "name": "tork-crm-site",
+  "private": true,
+  "scripts": {
+    "update": "node scripts/update-static-site.mjs",
+    "test": "npm run update && node --check conversion-enhancements.js && node --check lead-modal.js && node --check clinica/lead-modal.js && node --test tests/static-site.test.mjs",
+    "test:browser": "node tests/browser-smoke.cjs",
+    "test:browser:live": "node tests/browser-smoke.cjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.1"
+  }
+}
