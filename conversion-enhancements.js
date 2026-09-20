@@ -2,6 +2,18 @@
   "use strict";
 
   const WHATSAPP_NUMBER = "5543984129754";
+  const FOUNDERS = [
+    {
+      name: "Heitor Alves",
+      role: "Cofundador",
+      image: "/heitor-alves.jpg",
+    },
+    {
+      name: "Augusto Fioruci",
+      role: "Cofundador",
+      image: "/augusto-fioruci.jpg",
+    },
+  ];
   const CONFIG = {
     site: {
       page: "site",
@@ -229,6 +241,69 @@
     }
   }
 
+  function createFoundersSection() {
+    if (document.getElementById("cofundadores")) return;
+
+    const faq = document.getElementById("perguntas-frequentes");
+    const finalSection = document.querySelector('[data-tork-cta="final"]')?.closest("section");
+    const anchor = faq || finalSection;
+    if (!anchor) return;
+
+    const section = document.createElement("section");
+    section.id = "cofundadores";
+    section.className = "tork-founders";
+    section.setAttribute("aria-labelledby", "tork-founders-title");
+
+    const inner = document.createElement("div");
+    inner.className = "tork-founders__inner";
+
+    const intro = document.createElement("header");
+    intro.className = "tork-founders__intro";
+    const eyebrow = document.createElement("p");
+    eyebrow.className = "tork-founders__eyebrow";
+    eyebrow.textContent = "Quem constrói o Tork";
+    const title = document.createElement("h2");
+    title.id = "tork-founders-title";
+    title.textContent = "Conheça os cofundadores da Tork.";
+    const description = document.createElement("p");
+    description.textContent =
+      "Heitor Alves e Augusto Fioruci são cofundadores da plataforma.";
+    intro.append(eyebrow, title, description);
+
+    const grid = document.createElement("div");
+    grid.className = "tork-founders__grid";
+    FOUNDERS.forEach((founder) => {
+      const article = document.createElement("article");
+      article.className = "tork-founder";
+
+      const portrait = document.createElement("div");
+      portrait.className = "tork-founder__portrait";
+      const image = document.createElement("img");
+      image.src = founder.image;
+      image.alt = `${founder.name}, ${founder.role.toLowerCase()} da Tork`;
+      image.loading = "lazy";
+      image.decoding = "async";
+      image.width = 640;
+      image.height = 800;
+      portrait.append(image);
+
+      const details = document.createElement("div");
+      details.className = "tork-founder__details";
+      const name = document.createElement("h3");
+      name.textContent = founder.name;
+      const role = document.createElement("p");
+      role.textContent = founder.role;
+      details.append(name, role);
+
+      article.append(portrait, details);
+      grid.append(article);
+    });
+
+    inner.append(intro, grid);
+    section.append(inner);
+    anchor.before(section);
+  }
+
   function moveFaqBeforeFinalCta() {
     const faq = document.getElementById("perguntas-frequentes");
     const finalSection = document.querySelector('[data-tork-cta="final"]')?.closest("section");
@@ -281,6 +356,7 @@
     createProofSection();
     enhanceFinalCta();
     moveFaqBeforeFinalCta();
+    createFoundersSection();
     enhanceModal();
     enableCtaFallback();
     document.documentElement.dataset.torkConversionEnhancements = "ready";

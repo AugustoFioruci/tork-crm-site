@@ -28,6 +28,15 @@ test("imagem institucional fica elegível para busca e compartilhamento", () => 
   assert.ok(fs.existsSync(path.join(ROOT, "og-tork-brand.png")));
 });
 
+test("cofundadores aparecem com retratos locais e identificação factual", () => {
+  const enhancements = fs.readFileSync(path.join(ROOT, "conversion-enhancements.js"), "utf8");
+  assert.match(enhancements, /Heitor Alves/);
+  assert.match(enhancements, /Augusto Fioruci/);
+  assert.equal((enhancements.match(/role: "Cofundador"/g) || []).length, 2);
+  assert.ok(fs.existsSync(path.join(ROOT, "heitor-alves.jpg")));
+  assert.ok(fs.existsSync(path.join(ROOT, "augusto-fioruci.jpg")));
+});
+
 test("Meta Pixel começa sem consentimento e PageView é emitido pelo gerenciador", () => {
   assert.match(home, /fbq\('consent', 'revoke'\)/);
   assert.match(clinic, /fbq\('consent', 'revoke'\)/);

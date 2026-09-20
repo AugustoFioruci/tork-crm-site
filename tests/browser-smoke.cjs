@@ -93,6 +93,27 @@ const { chromium } = require("playwright");
 
     assert.equal(await page.locator("h1").first().textContent(), scenario.headline);
     assert.equal(await page.locator("#confianca-operacional article").count(), 3);
+    assert.equal(await page.locator("#cofundadores article").count(), 2);
+    assert.deepEqual(await page.locator("#cofundadores h3").allTextContents(), [
+      "Heitor Alves",
+      "Augusto Fioruci",
+    ]);
+    assert.deepEqual(await page.locator("#cofundadores .tork-founder__details p").allTextContents(), [
+      "Cofundador",
+      "Cofundador",
+    ]);
+    await page.locator("#cofundadores").scrollIntoViewIfNeeded();
+    await page.waitForFunction(() =>
+      Array.from(document.querySelectorAll("#cofundadores img")).every(
+        (image) => image.complete && image.naturalWidth > 0
+      )
+    );
+    assert.equal(
+      await page.locator("#cofundadores img").evaluateAll((images) =>
+        images.every((image) => image.complete && image.naturalWidth > 0)
+      ),
+      true
+    );
     assert.equal(await page.locator(".tork-demo-note").count(), 1);
     assert.equal(await page.locator(".tork-final-note").count(), 1);
     assert.equal(

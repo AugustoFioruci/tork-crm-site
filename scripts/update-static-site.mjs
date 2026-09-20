@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const MARKER_START = "<!--conversion-enhancements:start-->";
 const MARKER_END = "<!--conversion-enhancements:end-->";
-const HEAD_BLOCK = `${MARKER_START}<link rel="stylesheet" href="/conversion-enhancements.css?v=2"/><script src="/gtm-loader.js?v=1" defer></script><script src="/conversion-enhancements.js?v=2" defer></script>${MARKER_END}`;
+const HEAD_BLOCK = `${MARKER_START}<link rel="stylesheet" href="/conversion-enhancements.css?v=3"/><script src="/gtm-loader.js?v=1" defer></script><script src="/conversion-enhancements.js?v=3" defer></script>${MARKER_END}`;
 const NOSCRIPT_START = "<!--conversion-fallback:start-->";
 const NOSCRIPT_END = "<!--conversion-fallback:end-->";
 

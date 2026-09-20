@@ -143,6 +143,95 @@ html[data-tork-page="clinica"] .tork-hero-heading {
   font-size: clamp(2.75rem, 4.5vw, 4rem);
 }
 
+.tork-founders {
+  background: #fff;
+  color: var(--ink, #06152f);
+  padding: clamp(4rem, 8vw, 7rem) 1.5rem;
+}
+
+.tork-founders__inner {
+  display: grid;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  grid-template-columns: minmax(0, 0.8fr) minmax(28rem, 1.2fr);
+  margin: 0 auto;
+  max-width: 68rem;
+}
+
+.tork-founders__intro {
+  align-self: center;
+  max-width: 28rem;
+}
+
+.tork-founders__eyebrow {
+  color: var(--blue, #075cff);
+  font-size: 0.76rem;
+  font-weight: 750;
+  letter-spacing: 0.13em;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+}
+
+.tork-founders__intro h2 {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  letter-spacing: -0.045em;
+  line-height: 1.03;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.tork-founders__intro > p:last-child {
+  color: var(--muted, #5e6f8d);
+  font-size: 1rem;
+  line-height: 1.65;
+  margin: 1rem 0 0;
+}
+
+.tork-founders__grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tork-founder {
+  background: #f6f8fc;
+  border-radius: 1.25rem;
+  box-shadow: 0 0 0 1px rgba(7, 33, 78, 0.08);
+  margin: 0;
+  overflow: hidden;
+}
+
+.tork-founder__portrait {
+  aspect-ratio: 4 / 5;
+  background: #dfe5ef;
+  overflow: hidden;
+}
+
+.tork-founder__portrait img {
+  display: block;
+  filter: grayscale(1) contrast(1.03);
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  width: 100%;
+}
+
+.tork-founder__details {
+  padding: 1.15rem 1.25rem 1.3rem;
+}
+
+.tork-founder__details h3 {
+  font-size: 1.05rem;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.tork-founder__details p {
+  color: var(--blue, #075cff);
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin: 0.3rem 0 0;
+}
+
 @media (max-width: 760px) {
   .tork-proof {
     padding-inline: 1.1rem;
@@ -156,6 +245,17 @@ html[data-tork-page="clinica"] .tork-hero-heading {
     min-height: auto;
   }
 
+  .tork-founders {
+    padding-inline: 1.1rem;
+  }
+
+  .tork-founders__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .tork-founders__grid {
+    gap: 0.75rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
