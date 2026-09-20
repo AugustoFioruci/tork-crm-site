@@ -13,8 +13,9 @@
 (() => {
   "use strict";
 
-  /** Destino do formulário. Netlify Forms recebe o POST na própria origem. */
-  const FORM_NAME = "lead-site";
+  /** Endpoint público do CRM que repassa o lead pro Discord. */
+  const ENDPOINT = "/api/public/lead-site";
+  const ORIGEM = "site";
 
   /**
    * Link de agendamento. Hoje o projeto não tem ferramenta de agenda própria
@@ -154,6 +155,7 @@
     overlay.innerHTML = `
       <div class="tork-lead-modal">
         <button type="button" class="tork-lead-close" aria-label="Fechar">&times;</button>
+        <input type="text" name="website" data-honeypot tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;top:-9999px" />
 
         <div class="tork-lead-form-area">
           <p class="tork-lead-progress" data-progress>1 de ${TOTAL_STEPS}</p>
@@ -196,7 +198,32 @@
     return overlay;
   }
 
+  function secureCtaLink(cta) {
+    if (cta.getAttribute("href") !== "#demonstracao") {
+      cta.setAttribute("href", "#demonstracao");
+    }
+    cta.removeAttribute("target");
+    cta.removeAttribute("rel");
+    cta.setAttribute("role", "button");
+  }
+
+  function secureCtaLinks() {
+    document.querySelectorAll("[data-tork-cta]").forEach(secureCtaLink);
+  }
+
   function init() {
+    // O WhatsApp real só pode aparecer na tela de sucesso, depois que o lead
+    // for registrado. Também reafirma os atributos se a hidratação do Next
+    // tentar restaurar os links antigos do HTML original.
+    secureCtaLinks();
+    const ctaObserver = new MutationObserver(secureCtaLinks);
+    ctaObserver.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["href", "target", "rel"],
+      childList: true,
+      subtree: true,
+    });
+
     const overlay = build();
     const modal = overlay.querySelector(".tork-lead-modal");
     const formArea = overlay.querySelector(".tork-lead-form-area");
@@ -291,23 +318,22 @@
 
       const tracking = resolveTracking();
       const payload = {
-        "form-name": FORM_NAME,
+        origem: ORIGEM,
         nome,
         whatsapp,
-        whatsapp_digits: digitsOf(whatsapp),
         atendentes: answers.atendentes,
         problema: answers.problema,
         sistema: answers.sistema,
         pagina: window.location.href,
-        enviado_em: new Date().toISOString(),
+        bot_field: overlay.querySelector("[data-honeypot]")?.value || "",
       };
       for (const key of UTM_KEYS.concat("fbclid")) payload[key] = tracking[key] || "";
 
       try {
-        const response = await fetch("/", {
+        const response = await fetch(ENDPOINT, {
           method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams(payload).toString(),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         });
         if (!response.ok) throw new Error(`Falha ${response.status}`);
 
@@ -399,11 +425,8 @@
       }
     });
 
-    /*
-     * Os CTAs principais continuam sendo links para o WhatsApp no HTML: aqui
-     * apenas interceptamos o clique. Assim, se o JS não carregar, o visitante
-     * ainda chega ao WhatsApp em vez de encontrar um botão morto.
-     */
+    // Os CTAs principais só abrem o formulário. Os links reais de WhatsApp
+    // ficam dentro da tela de sucesso, criada após o envio confirmado.
     document.addEventListener("click", (event) => {
       const cta = event.target.closest("[data-tork-cta]");
       if (!cta) return;

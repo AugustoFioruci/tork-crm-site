@@ -1,0 +1,14 @@
+# robots.txt — torksolucoes.com
+# O site institucional é público e deve ser indexado por inteiro. O CRM em si
+# (crm.torksolucoes.com) é bloqueado no Caddy, não aqui: são domínios distintos
+# e cada um serve o seu próprio robots.txt.
+
+User-agent: *
+Allow: /
+
+# Content-Signal (padrão Cloudflare): aparecer na busca e ser citado por
+# assistentes de IA está liberado; treinar modelo com o conteúdo não está.
+# Para permitir treinamento, troque para ai-train=yes.
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+Sitemap: https://torksolucoes.com/sitemap.xml
