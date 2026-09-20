@@ -55,6 +55,13 @@ npx playwright install chromium
 npm run test:browser
 ```
 
+Depois do deploy, a mesma bateria roda contra a URL pública sem enviar lead
+real:
+
+```bash
+QA_BASE_URL=https://torksolucoes.com npm run test:browser:live
+```
+
 Ele cobre home e `/clinica/` em desktop e mobile, reposicionamento do FAQ,
 modal, `prefers-reduced-motion`, UTMs, origem e um único evento `Lead`/conversão
 depois de uma resposta de API simulada com sucesso.

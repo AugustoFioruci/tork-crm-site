@@ -7,6 +7,9 @@ const { chromium } = require("playwright");
 (async () => {
   const output = path.join(process.cwd(), ".qa-artifacts");
   fs.mkdirSync(output, { recursive: true });
+  const baseUrl = (process.env.QA_BASE_URL || "http://127.0.0.1:4173").replace(/\/$/, "");
+  const baseOrigin = new URL(baseUrl).origin;
+  const usesLocalServer = baseOrigin === "http://127.0.0.1:4173";
   const contentTypes = {
     ".css": "text/css; charset=utf-8",
     ".html": "text/html; charset=utf-8",
@@ -38,8 +41,18 @@ const { chromium } = require("playwright");
       response.end(body);
     });
   });
-  await new Promise((resolve) => server.listen(4173, "127.0.0.1", resolve));
+  if (usesLocalServer) {
+    await new Promise((resolve) => server.listen(4173, "127.0.0.1", resolve));
+  }
   const browser = await chromium.launch({ headless: true });
+
+  async function blockThirdParty(context) {
+    await context.route("**/*", (route) => {
+      const requestOrigin = new URL(route.request().url()).origin;
+      if (requestOrigin === baseOrigin) route.continue();
+      else route.abort();
+    });
+  }
 
   for (const scenario of [
     {
@@ -64,7 +77,7 @@ const { chromium } = require("playwright");
     },
   ]) {
     const context = await browser.newContext({ viewport: scenario.viewport });
-    await context.route(/^https?:\/\/(?!127\.0\.0\.1:4173).*/, (route) => route.abort());
+    await blockThirdParty(context);
     const page = await context.newPage();
     const errors = [];
     page.on("console", (message) => {
@@ -72,7 +85,7 @@ const { chromium } = require("playwright");
     });
     page.on("pageerror", (error) => errors.push(`page: ${error.message}`));
 
-    await page.goto(`http://127.0.0.1:4173${scenario.path}`, {
+    await page.goto(`${baseUrl}${scenario.path}`, {
       waitUntil: "load",
       timeout: 15000,
     });
@@ -179,7 +192,7 @@ const { chromium } = require("playwright");
     { path: "/clinica/", origem: "clinica" },
   ]) {
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-    await context.route(/^https?:\/\/(?!127\.0\.0\.1:4173).*/, (route) => route.abort());
+    await blockThirdParty(context);
     let payload = null;
     await context.route("**/api/public/lead-site", async (route) => {
       payload = route.request().postDataJSON();
@@ -187,7 +200,7 @@ const { chromium } = require("playwright");
     });
     const page = await context.newPage();
     await page.goto(
-      `http://127.0.0.1:4173${leadScenario.path}?utm_source=qa&utm_campaign=landing`,
+      `${baseUrl}${leadScenario.path}?utm_source=qa&utm_campaign=landing`,
       { waitUntil: "load", timeout: 15000 }
     );
     await page.waitForFunction(
@@ -236,9 +249,9 @@ const { chromium } = require("playwright");
     viewport: { width: 1280, height: 900 },
     reducedMotion: "reduce",
   });
-  await reducedContext.route(/^https?:\/\/(?!127\.0\.0\.1:4173).*/, (route) => route.abort());
+  await blockThirdParty(reducedContext);
   const reducedPage = await reducedContext.newPage();
-  await reducedPage.goto("http://127.0.0.1:4173/", { waitUntil: "load", timeout: 15000 });
+  await reducedPage.goto(`${baseUrl}/`, { waitUntil: "load", timeout: 15000 });
   await reducedPage.waitForFunction(
     () => document.documentElement.dataset.torkConversionEnhancements === "ready"
   );
@@ -250,7 +263,9 @@ const { chromium } = require("playwright");
   await reducedContext.close();
 
   await browser.close();
-  await new Promise((resolve) => server.close(resolve));
+  if (usesLocalServer) {
+    await new Promise((resolve) => server.close(resolve));
+  }
   console.log(
     "Browser smoke: 3 layouts + consentimento + modal + 2 conversões simuladas + reduced motion OK"
   );
