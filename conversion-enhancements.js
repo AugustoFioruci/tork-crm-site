@@ -39,7 +39,7 @@
     clinica: {
       page: "clinica",
       headline:
-        "Sua clínica responde, orienta e agenda pacientes no WhatsApp — mesmo fora do horário.",
+        "Atendimento no WhatsApp, mesmo fora do horário.",
       description:
         "O Tork organiza cada conversa, consulta os dados da clínica e conduz o paciente até o próximo passo sem sobrecarregar a recepção.",
       headerCta: "Ver o Tork na minha clínica",
@@ -113,16 +113,6 @@
       if (spans[0]) spans[0].textContent = config.headerCta;
       if (spans[1]) spans[1].textContent = config.headerCtaShort;
     }
-
-    if (!isClinic) return;
-    const header = headerCta?.closest("header");
-    const headerInner = headerCta?.parentElement?.parentElement;
-    if (!header || !headerInner || headerInner.querySelector(".tork-home-link")) return;
-    const homeLink = document.createElement("a");
-    homeLink.className = "tork-home-link";
-    homeLink.href = "/";
-    homeLink.textContent = "Site principal";
-    headerCta.parentElement.before(homeLink);
   }
 
   function enhanceHero() {
@@ -135,6 +125,7 @@
     const actions = heroCta.parentElement;
     const trustLine = actions?.nextElementSibling;
 
+    if (headline) headline.classList.add("tork-hero-heading");
     if (config.headline && headline) headline.textContent = config.headline;
     if (description?.tagName === "P") description.textContent = config.description;
     setLinkLabel(heroCta, config.heroCta);

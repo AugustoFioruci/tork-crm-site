@@ -64,15 +64,13 @@ const { chromium } = require("playwright");
     {
       name: "clinica",
       path: "/clinica/",
-      headline:
-        "Sua clínica responde, orienta e agenda pacientes no WhatsApp — mesmo fora do horário.",
+      headline: "Atendimento no WhatsApp, mesmo fora do horário.",
       viewport: { width: 1440, height: 1000 },
     },
     {
       name: "clinica-mobile",
       path: "/clinica/",
-      headline:
-        "Sua clínica responde, orienta e agenda pacientes no WhatsApp — mesmo fora do horário.",
+      headline: "Atendimento no WhatsApp, mesmo fora do horário.",
       viewport: { width: 390, height: 844 },
     },
   ]) {
@@ -116,6 +114,12 @@ const { chromium } = require("playwright");
         await page.locator("header nav").evaluate((node) => getComputedStyle(node).display),
         "none"
       );
+      assert.equal(await page.getByRole("link", { name: "Site principal" }).count(), 0);
+      const headingLines = await page.locator("h1").first().evaluate((node) => {
+        const style = getComputedStyle(node);
+        return Math.round(node.getBoundingClientRect().height / parseFloat(style.lineHeight));
+      });
+      assert.ok(headingLines <= (scenario.name === "clinica" ? 3 : 4));
     }
 
     const beforeConsent = await page.evaluate(() => ({
