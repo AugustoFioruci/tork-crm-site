@@ -2,7 +2,7 @@
   const PIXEL_ID = "1067818909038288";
   const CONSENT_KEY = "tork_marketing_consent_v1";
   const GOOGLE_ADS_ID = "AW-18453697785";
-  const GOOGLE_ADS_CONVERSION_ID = "AW-18453697785/dKQhCLXShvkcEPmptN9E";
+  const GOOGLE_ADS_CONVERSION_ID = "AW-18453697785/XNhuCJf_h4AdEPmptN9E";
   let marketingAllowed = false;
   let googleAdsInitialized = Boolean(window.__torkGoogleAdsInitialized);
   let googleLeadTracked = false;

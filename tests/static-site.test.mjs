@@ -68,7 +68,7 @@ test("Google Ads e Meta Lead só são chamados depois do POST bem-sucedido", () 
     assert.ok(fetchIndex >= 0 && successIndex > fetchIndex && leadIndex > successIndex);
   }
   for (const pixelScript of [pixelHome, pixelClinic]) {
-    assert.match(pixelScript, /AW-18453697785\/dKQhCLXShvkcEPmptN9E/);
+    assert.match(pixelScript, /AW-18453697785\/XNhuCJf_h4AdEPmptN9E/);
     assert.match(pixelScript, /eventName === "Lead"/);
   }
 });

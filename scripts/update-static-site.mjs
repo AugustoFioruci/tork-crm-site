@@ -43,6 +43,14 @@ function updateHtml(relativePath, kind) {
     )
     .replace(/<script src="\/gtm-loader\.js[^>]*><\/script>/g, "");
 
+  // O identificador da conversão fica no gerenciador de marketing. Ao trocar
+  // o label, a versão do asset também muda para não servir o evento antigo do
+  // cache do navegador ou da CDN.
+  html = html.replace(
+    /(<script src="\/(?:clinica\/)?meta-pixel\.js)\?[^\"]*(" defer><\/script>)/g,
+    "$1?v=7-google-lead$2"
+  );
+
   html = replaceManagedBlock(html, MARKER_START, MARKER_END, HEAD_BLOCK, "</head>");
   html = replaceManagedBlock(
     html,
