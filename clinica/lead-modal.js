@@ -24,10 +24,10 @@
    */
   const WHATSAPP_URL =
     "https://wa.me/5543984129754?text=" +
-    encodeURIComponent("Olá, Heitor! Acabei de preencher o formulário no site e quero ver o Tork CRM na minha clínica.");
+    encodeURIComponent("Olá, Heitor! Acabei de preencher o formulário no site e quero ver o sistema Tork na minha clínica.");
   const SCHEDULE_URL =
     "https://wa.me/5543984129754?text=" +
-    encodeURIComponent("Olá, Heitor! Quero agendar um horário para conhecer o Tork CRM.");
+    encodeURIComponent("Olá, Heitor! Quero agendar um horário para conhecer o sistema Tork.");
 
   const STEPS = [
     {
@@ -244,6 +244,13 @@
     let leadFired = false;
     let sending = false;
 
+    function focusCurrentStep() {
+      const focusable = steps[current].querySelector("button:not([disabled]), input, select, textarea");
+      if (!focusable) return;
+      const opensKeyboard = focusable.matches("input, select, textarea");
+      if (!opensKeyboard || window.matchMedia("(min-width: 561px)").matches) focusable.focus();
+    }
+
     function showStep(index) {
       current = index;
       steps.forEach((step, position) => {
@@ -251,9 +258,9 @@
       });
       progress.textContent = `${index + 1} de ${TOTAL_STEPS}`;
       bar.style.width = `${((index + 1) / TOTAL_STEPS) * 100}%`;
-      const focusable = steps[index].querySelector("button, input");
-      // No mobile o autofocus abriria o teclado por cima das opções.
-      if (focusable && window.matchMedia("(min-width: 561px)").matches) focusable.focus();
+      // Botões recebem foco em qualquer tela; campos de texto só no desktop,
+      // para não abrir o teclado móvel antes da pessoa pedir.
+      focusCurrentStep();
     }
 
     function markFormStart() {
@@ -271,6 +278,9 @@
       document.body.style.overflow = "hidden";
       track("CTA_Click", { content_name: "CTA landing clínica", cta: source || "cta" }, true);
       if (!leadFired) showStep(0);
+      // O clique que abriu o modal pode tentar devolver o foco ao CTA.
+      // Reafirma o primeiro controle quando o evento atual terminar.
+      window.setTimeout(focusCurrentStep, 100);
     }
 
     function close() {
@@ -405,6 +415,14 @@
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && overlay.dataset.open === "true") close();
+      if (
+        event.key === "Tab" &&
+        overlay.dataset.open === "true" &&
+        !overlay.contains(document.activeElement)
+      ) {
+        event.preventDefault();
+        focusCurrentStep();
+      }
     });
 
     // Prende o foco dentro do modal enquanto ele estiver aberto.

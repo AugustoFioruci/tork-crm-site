@@ -51,7 +51,7 @@
     clinica: {
       page: "clinica",
       headline:
-        "Atendimento no WhatsApp, mesmo fora do horário.",
+        "Paciente sem resposta procura outra clínica.",
       description:
         "O Tork organiza cada conversa, consulta os dados da clínica e conduz o paciente até o próximo passo sem sobrecarregar a recepção.",
       headerCta: "Ver o Tork na minha clínica",
@@ -351,12 +351,18 @@
   function enhance() {
     if (document.documentElement.dataset.torkConversionEnhancements === "ready") return;
     document.documentElement.dataset.torkPage = config.page;
-    enhanceHeader();
-    enhanceHero();
-    createProofSection();
-    enhanceFinalCta();
-    moveFaqBeforeFinalCta();
-    createFoundersSection();
+    // As landings atuais já publicam copy, prova, cofundadores e FAQ no HTML.
+    // O caminho legado continua disponível para um export antigo, mas nunca
+    // reescreve o conteúdo de uma página de campanha nova depois do load.
+    const campaignPage = Boolean(document.body?.dataset.torkCampaign);
+    if (!campaignPage) {
+      enhanceHeader();
+      enhanceHero();
+      createProofSection();
+      enhanceFinalCta();
+      moveFaqBeforeFinalCta();
+      createFoundersSection();
+    }
     enhanceModal();
     enableCtaFallback();
     document.documentElement.dataset.torkConversionEnhancements = "ready";

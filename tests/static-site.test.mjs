@@ -22,24 +22,37 @@ test("assets de conversão entram uma única vez nas duas páginas", () => {
 
 test("imagem institucional fica elegível para busca e compartilhamento", () => {
   assert.match(home, /og-tork-brand\.png/);
-  assert.match(home, /Tork CRM — identidade visual da plataforma/);
+  assert.match(home, /Tork — CRM, ERP e inteligência artificial/);
   assert.match(home, /max-image-preview:large/);
   assert.match(clinic, /"image":"https:\/\/torksolucoes\.com\/og-tork-brand\.png"/);
   assert.ok(fs.existsSync(path.join(ROOT, "og-tork-brand.png")));
 });
 
 test("cofundadores aparecem com retratos locais e identificação factual", () => {
-  const enhancements = fs.readFileSync(path.join(ROOT, "conversion-enhancements.js"), "utf8");
-  assert.match(enhancements, /Heitor Alves/);
-  assert.match(enhancements, /Augusto Fioruci/);
-  assert.equal((enhancements.match(/role: "Cofundador"/g) || []).length, 2);
+  for (const html of [home, clinic]) {
+    assert.match(html, /Heitor Alves/);
+    assert.match(html, /Augusto Fioruci/);
+    assert.equal((html.match(/<span>Cofundador<\/span>/g) || []).length, 2);
+  }
   assert.ok(fs.existsSync(path.join(ROOT, "heitor-alves.jpg")));
   assert.ok(fs.existsSync(path.join(ROOT, "augusto-fioruci.jpg")));
 });
 
+test("campanhas publicam a nova estrutura sem depender de reescrita visual", () => {
+  assert.match(home, /data-tork-campaign="site"/);
+  assert.match(clinic, /data-tork-campaign="clinica"/);
+  assert.match(home, /Pare de perder vendas porque suas áreas/);
+  assert.match(clinic, /Paciente sem resposta/);
+  assert.equal((home.match(/class="pain-item"/g) || []).length, 3);
+  assert.equal((clinic.match(/class="pain-item"/g) || []).length, 3);
+  assert.match(clinic, /data-module="agenda"/);
+  assert.match(clinic, /\/clinica\/lead-modal\.js\?v=3/);
+  assert.match(clinic, /\/clinica\/meta-pixel\.js\?v=7-google-lead/);
+});
+
 test("Meta Pixel começa sem consentimento e PageView é emitido pelo gerenciador", () => {
-  assert.match(home, /fbq\('consent', 'revoke'\)/);
-  assert.match(clinic, /fbq\('consent', 'revoke'\)/);
+  assert.match(home, /fbq\('consent'\s*,\s*'revoke'\)/);
+  assert.match(clinic, /fbq\('consent'\s*,\s*'revoke'\)/);
   assert.doesNotMatch(clinic, /fbq\('track', 'PageView'\)/);
   for (const script of [pixelHome, pixelClinic]) {
     assert.match(script, /if \(!marketingAllowed\) return/);

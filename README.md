@@ -6,11 +6,11 @@ isso, o export versionado é hoje a fonte operacional das duas páginas.
 
 ## Melhorias mantidas fora dos chunks compilados
 
-`conversion-enhancements.js` e `conversion-enhancements.css` concentram a
-copy, os elementos de confiança, a simplificação do header da landing de
-clínica e o comportamento de fallback dos CTAs. Eles usam apenas seletores
-estáveis (`data-tork-cta`, IDs e classes próprias), sem depender dos hashes de
-CSS Modules do build antigo.
+As landings atuais mantêm a copy, a demonstração interativa, a prova e os
+cofundadores diretamente no HTML estático. `conversion-enhancements.js` e
+`conversion-enhancements.css` continuam fornecendo inicialização do modal,
+fallback dos CTAs e compatibilidade com exports antigos, mas páginas marcadas
+com `data-tork-campaign` nunca têm sua copy reescrita depois do carregamento.
 
 Depois de substituir qualquer HTML por um novo export, rode:
 

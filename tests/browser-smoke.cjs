@@ -58,19 +58,19 @@ const { chromium } = require("playwright");
     {
       name: "home",
       path: "/",
-      headline: "Seu próximo cliente não vai esperar.",
+      headline: "Pare de perder vendas porque suas áreas não se falam.",
       viewport: { width: 1440, height: 1000 },
     },
     {
       name: "clinica",
       path: "/clinica/",
-      headline: "Atendimento no WhatsApp, mesmo fora do horário.",
+      headline: "Paciente sem resposta procura outra clínica.",
       viewport: { width: 1440, height: 1000 },
     },
     {
       name: "clinica-mobile",
       path: "/clinica/",
-      headline: "Atendimento no WhatsApp, mesmo fora do horário.",
+      headline: "Paciente sem resposta procura outra clínica.",
       viewport: { width: 390, height: 844 },
     },
   ]) {
@@ -92,13 +92,14 @@ const { chromium } = require("playwright");
     );
 
     assert.equal(await page.locator("h1").first().textContent(), scenario.headline);
-    assert.equal(await page.locator("#confianca-operacional article").count(), 3);
+    assert.equal(await page.locator(".pain-item").count(), 3);
+    assert.equal(await page.locator(".operation-flow article").count(), 4);
     assert.equal(await page.locator("#cofundadores article").count(), 2);
-    assert.deepEqual(await page.locator("#cofundadores h3").allTextContents(), [
-      "Heitor Alves",
+    assert.deepEqual(await page.locator("#cofundadores .person-info strong").allTextContents(), [
       "Augusto Fioruci",
+      "Heitor Alves",
     ]);
-    assert.deepEqual(await page.locator("#cofundadores .tork-founder__details p").allTextContents(), [
+    assert.deepEqual(await page.locator("#cofundadores .person-info span").allTextContents(), [
       "Cofundador",
       "Cofundador",
     ]);
@@ -131,16 +132,21 @@ const { chromium } = require("playwright");
     );
 
     if (scenario.name.startsWith("clinica")) {
-      assert.equal(
-        await page.locator("header nav").evaluate((node) => getComputedStyle(node).display),
-        "none"
-      );
+      assert.equal(await page.locator('header a[href="#perguntas-frequentes"]').count(), 1);
       assert.equal(await page.getByRole("link", { name: "Site principal" }).count(), 0);
       const headingLines = await page.locator("h1").first().evaluate((node) => {
         const style = getComputedStyle(node);
         return Math.round(node.getBoundingClientRect().height / parseFloat(style.lineHeight));
       });
-      assert.ok(headingLines <= (scenario.name === "clinica" ? 3 : 4));
+      assert.ok(
+        headingLines <= (scenario.name === "clinica" ? 3 : 4),
+        `${scenario.name}: headline ocupou ${headingLines} linhas`
+      );
+      await page.getByRole("button", { name: /Agenda/ }).click();
+      assert.match(await page.locator("#demo-workspace").innerText(), /Consultas ligadas às conversas/);
+    } else {
+      await page.getByRole("button", { name: /Financeiro/ }).click();
+      assert.match(await page.locator("#demo-workspace").innerText(), /Contas ligadas à operação/);
     }
 
     const beforeConsent = await page.evaluate(() => ({
@@ -184,6 +190,15 @@ const { chromium } = require("playwright");
 
     await page.locator('[data-tork-cta="hero"]').click();
     assert.equal(await page.locator(".tork-lead-overlay").getAttribute("data-open"), "true");
+    await page.waitForFunction(() =>
+      document.querySelector(".tork-lead-overlay")?.contains(document.activeElement)
+    );
+    assert.equal(
+      await page.evaluate(() =>
+        document.querySelector(".tork-lead-overlay")?.contains(document.activeElement)
+      ),
+      true
+    );
     await page.locator(".tork-lead-step:not([hidden]) .tork-lead-option").first().click();
     await page.waitForTimeout(220);
     await page.locator(".tork-lead-step:not([hidden]) .tork-lead-option").first().click();
@@ -197,6 +212,10 @@ const { chromium } = require("playwright");
     assert.match(await page.locator(".tork-lead-legal").textContent(), /Sem compromisso/);
 
     await page.keyboard.press("Escape");
+    await page.waitForFunction(
+      () => document.querySelector(".tork-lead-overlay")?.dataset.open !== "true"
+    );
+    await page.waitForTimeout(180);
     await page.screenshot({
       path: path.join(output, `${scenario.name}.png`),
       fullPage: true,
@@ -281,7 +300,7 @@ const { chromium } = require("playwright");
     () => document.documentElement.dataset.torkConversionEnhancements === "ready"
   );
   const duration = await reducedPage
-    .locator(".tork-proof__item")
+    .locator(".pain-item")
     .first()
     .evaluate((node) => getComputedStyle(node).transitionDuration);
   assert.match(duration, /1e-05s|0\.00001s|0\.01ms/);

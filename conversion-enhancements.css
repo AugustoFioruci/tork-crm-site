@@ -135,7 +135,7 @@
   margin: 1rem 0 0;
 }
 
-html[data-tork-page="clinica"] header nav {
+html[data-tork-page="clinica"] body:not([data-tork-campaign]) header nav {
   display: none;
 }
 
